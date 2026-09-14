@@ -1,0 +1,19 @@
+{
+  "name": "dubbing-and-subtitle-tools",
+  "version": "1.0.0",
+  "description": "Comprehensive dubbing, subtitle translation, dialogue extraction, and lip-sync tools for Antigravity",
+  "author": {
+    "name": "Umut Aktepe"
+  },
+  "license": "MIT",
+  "keywords": [
+    "antigravity",
+    "dubbing",
+    "subtitles",
+    "translation",
+    "lip-sync",
+    "srt",
+    "timecodes",
+    "phonetics"
+  ]
+}
