@@ -20,11 +20,11 @@ Herhangi bir alt yazı analizi veya düzeltme işlemine başlamadan önce kullan
    > - `36 CPL (Genişletilmiş / Dar Ekran Standardı)`
 
 2. **Kaynak / Orijinal Dosya Varlığı:**
-   > *"Çeviri ve bağlam doğruluğunu çapraz kontrol etmek için orijinal/kaynak (İngilizce vb.) bir dosya var mı?"*
+   > *"Çeviri ve bağlam doğruluğunu çapraz kontrol etmek için orijinal/kaynak bir dosya var mı? (SRT, DOCX, XLSX, PDF, MD veya TXT formatında diyalog listesi, senaryo veya çeviri tablosu olabilir)"*
    > - `Evet, kaynak dosya var (Lütfen dosya yolunu belirtin).`
    > - `Hayır, kaynak dosya yok (Yalnızca Türkçe metin ve teknik akış üzerinden ilerle).`
 
-*Not: Kullanıcı kaynak dosya olmadığını belirtirse, denetim yalnızca Türkçe dosyanın iç mantığı, akıcılığı ve teknik kuralları üzerinden sürdürülür.*
+*Not: Kaynak dosya kesinlikle sadece İngilizce .srt olmak zorunda değildir! Filmin orijinal diyalog listesi (Combined Continuity & Spotting List - CCSL), dublaj/alt yazı senaryosu veya çeviri tablosu `.docx`, `.pdf`, `.xlsx`, `.md` veya `.txt` formatında olabilir. Ajan bu dosyaları otomatik ayrıştırarak sahne ve konuşma bağlamını Türkçe alt yazıyla çapraz denetler. Kullanıcı kaynak dosya olmadığını belirtirse denetim yalnızca Türkçe dosyanın iç mantığı ve teknik kuralları üzerinden sürdürülür.*
 
 ---
 
@@ -128,6 +128,18 @@ Kullanıcı rapordaki düzeltmeleri onayladığında:
 - Blok numaraları `1`den başlayarak sıralı hale getirilir.
 - **Zaman Kodları Kesinlikle Korunur:** Blokların başlangıç ve bitiş zaman kodlarına (`00:00:00,000 --> 00:00:00,000`) kesinlikle dokunulmaz. Kullanıcı talep etse dahi otomatik süre uzatma veya kısaltma **yapılmaz**.
 - Orijinal dosya korunur, çıktı `[DosyaAdi]_duzeltilmis.srt` olarak kaydedilir veya kullanıcının açık talebi varsa üzerine yazılır.
+
+---
+
+## Desteklenen Kaynak Metin Formatları ve Çapraz Kontrol
+
+Çapraz kontrol için kaynak dosya kesinlikle sadece İngilizce `.srt` ile sınırlı değildir. Ajan aşağıdaki tüm profesyonel stüdyo formatlarını otomatik okuyup ayrıştırabilir:
+
+- **SRT (.srt):** Zaman kodları üzerinden blok blok eşleştirilir.
+- **Word (.docx):** Diyalog listeleri (CCSL), dublaj/alt yazı çeviri metinleri Python'ın yerleşik `zipfile` ve `xml.etree.ElementTree` modülleriyle doğrudan okunur; sahne ve konuşmacı replikleri taranır.
+- **Excel (.xlsx):** Çok sütunlu çeviri tabloları, zaman kodlu replik listeleri ve dublaj matrisleri XML tabanlı olarak ayrıştırılır ve satır satır eşleştirilir.
+- **PDF (.pdf):** Orijinal senaryolar ve diyalog dökümleri sistemdeki `/usr/bin/pdftotext` veya Python PDF araçlarıyla metne dönüştürülerek bağlam karşılaştırması yapılır.
+- **Markdown ve Düz Metin (.md, .txt):** Doğrudan okunarak sahne akışı ve diyaloglar üzerinden çapraz denetim yürütülür.
 
 ---
 
