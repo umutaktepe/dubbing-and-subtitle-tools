@@ -58,6 +58,37 @@ Bir doğrudan alıntı birden fazla alt yazı kartına bölünüyorsa:
 - **Satır Sonu Boşlukları (Trailing Whitespace):** Satır sonlarında görünmez boşluk karakteri kalmamalıdır.
 - **Üç Nokta / Ellipsis Standardı:** Üç ayrı nokta (`...`) **kesinlikle kullanılmaz**. Bunun yerine her zaman tek bir karakter olan Unicode yatay üç nokta / ellipsis (`…` / U+2026) kullanılmalıdır. Metinde geçen tüm `...` kullanımları tek glifli `…` ile değiştirilmelidir.
 
+### 5. Sayıların Yazımı (Yazıyla mı Rakamla mı? - Netflix & TDK Standardı)
+- **0 ile 9 Arası Sayılar (Harfle / Yazıyla):** Yer veya zaman kısıtlaması (CPL/CPS taşması) bulunmadıkça 0'dan 9'a kadar olan sayılar yazıyla yazılır:
+  - ✅ `"üç gün sonra"`, `"beş kişi"`, `"dokuz ay"`
+  - ❌ `"3 gün sonra"`, `"5 kişi"`, `"9 ay"`
+- **10 ve Üzeri Sayılar (Rakamla):** 10 dahil ve 10'dan büyük tüm sayılar rakamla yazılır:
+  - ✅ `"10 yıldır"`, `"14 yaşında"`, `"25 kişi"`, `"150 metre"`
+  - ❌ `"on yıldır"`, `"on dört yaşında"`, `"yirmi beş kişi"`
+- **Ölçü, Ağırlık ve Para Birimleri:** Sayı değerine bakılmaksızın rakamla yazılır:
+  - ✅ `"4 kilo"`, `"5 metre"`, `"10 dolar"`, `"%50"`
+- **Deyimler ve Kalıplaşmış İfadeler (İstisna):** Sayı değeri ne olursa olsun her zaman yazıyla yazılır:
+  - ✅ `"kırk kere söyledim"`, `"bin dereden su getirmek"`, `"on parmağında on marifet"`
+  - ❌ `"40 kere söyledim"`, `"1000 dereden su getirmek"`
+- **Geri Sayımlar ve Seri Sayımlar:** Seri halinde sayımlarda tutarlılık için yazıyla yazılır:
+  - ✅ `"Üç, iki, bir, kayıt!"`
+- **Binlik ve Ondalık Sayı Biçimi (TDK Standardı):**
+  - **Binlik Ayırıcı:** Türkçede binlik basamaklar **nokta (.)** ile ayrılır (İngilizce virgül kullanılmaz): `4.000`, `10.500` (❌ `4,000`).
+  - **Ondalık Ayırıcı:** Ondalık kısımlar **virgül (,)** ile ayrılır: `3,5 milyon`, `12,75` (❌ `3.5 milyon`).
+  - **Büyük Sayılar:** Milyon, milyar gibi büyük sayılarda basamak yığılmasını önlemek için rakam + kelime kullanılır: `15 milyon`, `4 milyar`.
+
+### 6. Alt Yazı Blok Süreleri (Minimum ve Maksimum Sınır)
+- **Minimum Süre:** Bir alt yazı kartının ekranda kalma süresi **0.833 saniyeden (833 milisaniye / 20 kare)** kısa olamaz.
+- **Maksimum Süre:** Bir alt yazı kartının ekranda kalma süresi **7.0 saniyeden (7000 milisaniye)** uzun olamaz.
+
+### 7. ⚠️ SÜREYE MÜDAHALE YASAĞI (IRON RULE - DÜZELTME ASLA YAPILAMAZ)
+- **KESİN KURAL:** Alt yazı süreleri (başlangıç ve bitiş zaman kodları) doğrudan video kurgusuna, konuşmacının dudak hareketlerine ve sahne kesimlerine bağlıdır.
+- **YAPAY ZEKA ASLA SÜRE DÜZELTMESİ YAPMAZ:**
+  - Kullanıcı **özellikle ve açıkça talep etse dahi**, süre uzatma, süre kısaltma, kartları ileri/geri kaydırma veya zaman kodlarını değiştirme işlemi **KESİNLİKLE YAPILAMAZ**.
+  - Ajan/Skill, süre limit aşımı (< 0.833 sn veya > 7.0 sn) durumunda **YALNIZCA DENETİM RAPORU SUNAR**.
+  - Süre düzeltmesi ve zamanlama (re-timing) tamamen kullanıcının kendi inisiyatifindedir ve kullanıcı tarafından yapılmalıdır.
+  - Aşama 2'de düzeltilmiş SRT dosyası üretilirken blokların başlangıç ve bitiş zaman kodları (`00:00:00,000 --> 00:00:00,000`) **birebir korunur**.
+
 ---
 
 ## İki Aşamalı İş Akışı
@@ -84,15 +115,18 @@ Bir doğrudan alıntı birden fazla alt yazı kartına bölünüyorsa:
 ### Aşama 1: Detaylı Denetim Raporu Sunma
 Dosyayı doğrudan değiştirmeden önce kullanıcıya şu başlıklar altında kategorize edilmiş bir rapor sunulur:
 1. **Zaman Kodu ve Blok Sıralaması (Kronoloji Hataları):** Zaman kodları geriye giden, sıralaması karışmış veya başka kartın arasına kaçmış bloklar (Örn: blok 60 senkron hatası).
-2. **CPL Sınırı Aşımı:** Kullanıcının seçtiği CPL sınırını (36 veya 42) aşan satır numaraları ve karakter sayıları.
-3. **Anlatım Bozuklukları ve Eksiklik/Fazlalıklar:** Yüklem-özne uyumsuzlukları, tamlama yanlışları, pleonazmlar (*"ilk öncü"* vb.), motamot deyim kopyalamaları (*"şans vermek"* vb.), anglisizmler (*"özgür hissettiriyor"* vb.).
-4. **Bağlam ve Çeviri Hataları:** Kaynak metin varsa orijinal konuşmayla uyuşmayan, anlamı tersine çeviren veya özneyi muğlaklaştıran yerler.
-5. **Noktalama, Diyalog Tiresi ve İmla:** Tırnak içi nokta eksikleri, tek kalan diyalog tireleri, satır sonu boşlukları.
+2. **Blok Süresi Limit Aşımı:** 0.833 saniyeden kısa veya 7.0 saniyeden uzun süren kartlar (süreleri ve metinleriyle listelenir).
+3. **CPL Sınırı Aşımı:** Kullanıcının seçtiği CPL sınırını (36 veya 42) aşan satır numaraları ve karakter sayıları.
+4. **Anlatım Bozuklukları ve Eksiklik/Fazlalıklar:** Yüklem-özne uyumsuzlukları, tamlama yanlışları, pleonazmlar (*"ilk öncü"* vb.), motamot deyim kopyalamaları (*"şans vermek"* vb.), anglisizmler (*"özgür hissettiriyor"* vb.).
+5. **Bağlam ve Çeviri Hataları:** Kaynak metin varsa orijinal konuşmayla uyuşmayan, anlamı tersine çeviren veya özneyi muğlaklaştıran yerler.
+6. **Noktalama, Diyalog Tiresi ve İmla:** Tırnak içi nokta eksikleri, tek kalan diyalog tireleri, satır sonu boşlukları.
+7. **Sayıların Yazımı Uyarıları:** 0-9 arası sayıların gereksiz rakamla yazılması, 10 ve üzeri sayıların harfle yazılması, binlik ve ondalık ayırıcı biçimlendirme hataları (`4,000` yerine `4.000`, `2.5` yerine `2,5`).
 
 ### Aşama 2: Temiz SRT Dosyası Üretme
 Kullanıcı rapordaki düzeltmeleri onayladığında:
-- Hatalar düzeltilir.
+- Hatalar düzeltilir (metin, diyalog tireleri, tırnaklar, imla).
 - Blok numaraları `1`den başlayarak sıralı hale getirilir.
+- **Zaman Kodları Kesinlikle Korunur:** Blokların başlangıç ve bitiş zaman kodlarına (`00:00:00,000 --> 00:00:00,000`) kesinlikle dokunulmaz. Kullanıcı talep etse dahi otomatik süre uzatma veya kısaltma **yapılmaz**.
 - Orijinal dosya korunur, çıktı `[DosyaAdi]_duzeltilmis.srt` olarak kaydedilir veya kullanıcının açık talebi varsa üzerine yazılır.
 
 ---
@@ -124,3 +158,10 @@ python3 /home/umutaktepe/.gemini/config/plugins/dubbing-and-subtitle-tools/skill
 | `aşık olmak` | TDK: Sevdalı anlamındaki sözcük düzeltme işareti alır | `âşık olmak` |
 | `istediğim bir şeyleri` | Belirsiz "bir" ile belirtili "-leri" çelişkisi | `istediğim şeyleri` |
 | `...` (üç ayrı nokta) | Standart ihlali: Üç ayrı nokta kullanılmaz; tek glifli ellipsis zorunludur | `…` (tek karakter ellipsis) |
+| `3 gün sonra` | 0-9 arası sayılar yer kısıtı yoksa yazıyla yazılır | `üç gün sonra` |
+| `yirmi beş yaşında` | 10 ve üzeri sayılar (deyimler hariç) rakamla yazılır | `25 yaşında` |
+| `4,000 kişi` | Türkçede binlik basamak ayırıcı noktadır (virgül değil) | `4.000 kişi` |
+| `2.5 milyon` | Türkçede ondalık basamak ayırıcı virgüldür (nokta değil) | `2,5 milyon` |
+| `40 kere söyledim` | Deyimler ve kalıplaşmış sözler yazıyla yazılır | `kırk kere söyledim` |
+| Kart süresi < 0.833 sn | Minimum süre ihlali (yalnızca raporlanır, süreye müdahale edilmez) | Kullanıcı tarafından re-timing yapılmalı |
+| Kart süresi > 7.0 sn | Maksimum süre ihlali (yalnızca raporlanır, süreye müdahale edilmez) | Kullanıcı tarafından bölünmeli |
